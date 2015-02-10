@@ -1300,12 +1300,10 @@ We can create loosely-typed functions by handling an array of raw arguments, ins
 
 ``` swift
 db.create(function: "typeConformsTo", deterministic: true) { args in
-    switch (args[0], args[1]) {
-    case let (UTI as String, conformsToUTI as String):
+    if let UTI = args[0] as? String, conformsToUTI = args[1] as? String {
         return Int(UTTypeConformsTo(UTI, conformsToUTI))
-    default:
-        return nil
     }
+    return nil
 }
 ```
 
@@ -1392,14 +1390,14 @@ Though we recommend you stick with SQLite.swift’s type-safe system whenever po
   - `scalar` prepares a single `Statement` object from a SQL string, optionally binds values to it (using the statement’s `bind` function), executes, and returns the first value of the first row.
 
     ``` swift
-    db.scalar("SELECT count(*) FROM users") as Int
+    db.scalar("SELECT count(*) FROM users") as! Int
     ```
 
     Statements also have a `scalar` function, which can optionally re-bind values at execution.
 
     ``` swift
     let stmt = db.prepare("SELECT count (*) FROM users")
-    stmt.scalar() as Int
+    stmt.scalar() as! Int
     ```
 
 
